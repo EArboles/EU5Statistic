@@ -164,6 +164,12 @@ PROCESSED_DIR: Path = DATA_DIR / "processed"
 ERROR_DIR: Path = DATA_DIR / "errors"
 CACHE_DIR: Path = DATA_DIR / "cache"
 
+# ============================================================================
+# Application settings
+# ============================================================================
+SAVE_EXTENSION = ".eu5"
+TEMP_SAVE_EXTENSION = ".tmp"
+JSON_EXTENSION = ".json"
 
 # ============================================================================
 # External utilities
