@@ -1,6 +1,6 @@
 # Database interaction classes
 
-from .database import AsyncSessionLocal, engine
+from .database import AsyncSessionLocal, dispose_engine_async, engine
 from .db_operations import (
     EntityCaches,
     clear_year_data,
@@ -24,6 +24,7 @@ __all__ = [
     # database
     "AsyncSessionLocal",
     "engine",
+    "dispose_engine_async",
     # updater
     "DbUpdater",
     # operations

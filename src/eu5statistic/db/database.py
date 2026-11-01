@@ -21,3 +21,11 @@ AsyncSessionLocal = async_sessionmaker(
     class_=AsyncSession,
     expire_on_commit=False,
 )
+
+
+async def dispose_engine_async() -> None:
+    """
+    Asynchronously closes the connection pool.
+    Must be called from within an active asyncio event loop.
+    """
+    await engine.dispose()
