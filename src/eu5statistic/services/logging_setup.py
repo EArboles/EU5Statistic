@@ -76,7 +76,7 @@ def get_detail_logger(run_id: str) -> logging.Logger:
     return logger
 
 
-def rename_log_file(logger, new_name: str) -> None:
+def rename_log_file(logger: logging.Logger, new_name: str) -> None:
     """
     A method for renaming a log file and restarting the logger responsible for it
     :param logger: the logger

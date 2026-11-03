@@ -2,11 +2,16 @@
 
 import hashlib
 import logging
+import re
 from pathlib import Path
 
 from .file_parser import LocalizationFileParser
 
 logger = logging.getLogger(__name__)
+
+# Regular expression for finding variables.
+# In Paradox, this is typically $key$ or $key|command$
+VAR_PATTERN = re.compile(r"\$([^$]+)\$")
 
 
 class LocalizationLoader:
@@ -39,7 +44,53 @@ class LocalizationLoader:
                     data.update(self.parser.parse(file))
                 except (OSError, UnicodeDecodeError) as e:
                     logger.warning("Error loading localization %s: %s", file, e)
-        return data
+
+        # Once all data has been collected, we exclude references to other keys
+        resolved_data = self._resolve_references(data)
+        return resolved_data
+
+    def _resolve_references(self, data: dict[str, str]) -> dict[str, str]:
+        """
+        References of the form $key$ within localization strings are recursively replaced with their values.
+        """
+        resolved = {}
+        # Cache for already found strings of the form $key$
+        memo: dict[str, str] = {}
+        # A set for tracking circular references
+        resolving: set[str] = set()
+
+        def resolve_string(key: str, value: str) -> str:
+            if key in resolving:
+                logger.warning("Circular reference detected for key: %s", key)
+                return value
+
+            resolving.add(key)
+
+            def replace_var(match: re.Match[str]) -> str:
+                var_content = match.group(1)
+                # In Paradox, variables can have modifiers: $key|format$
+                # Separate the key name from the modifier
+                var_key = var_content.split("|")[0].strip()
+
+                if var_key in data:
+                    # If the value has not yet been resolved, resolve it recursively
+                    if var_key not in memo:
+                        memo[var_key] = resolve_string(var_key, data[var_key])
+                    return memo[var_key]
+
+                # If the key is not found, return the original string so that the error is visible
+                return str(match.group(0))
+
+            result = VAR_PATTERN.sub(replace_var, value)
+            resolving.remove(key)
+            return result
+
+        for k, v in data.items():
+            if k not in memo:
+                memo[k] = resolve_string(k, v)
+            resolved[k] = memo[k]
+
+        return resolved
 
     def compute_hash(self) -> str:
         """
