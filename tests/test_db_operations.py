@@ -166,11 +166,11 @@ async def test_upsert_helpers(func, model, input_data, expected_records, conflic
         args = mock.call_args.args
         kwargs = mock.call_args.kwargs
 
-        # model — первый позиционный аргумент
+        # model — first positional argument
         assert args[0] == model
-        # records — второй позиционный
+        # records — second positional argument
         assert args[1] == expected_records
-        # conflict_columns, update_columns — именованные
+        # conflict_columns, update_columns — named
         assert kwargs["conflict_columns"] == conflict
         assert kwargs.get("update_columns") == update
 
@@ -249,7 +249,7 @@ async def test_load_caches_returns_entity_caches() -> None:
             make_scalar(SimpleNamespace(id=1, name="peasants")),
             make_scalar(SimpleNamespace(id=2, name="russian")),
             make_scalar(SimpleNamespace(id=3, name="orthodox")),
-            make_scalar(SimpleNamespace(id=10)),  # Location: только id
+            make_scalar(SimpleNamespace(id=10)),  # Location: only id
             make_scalar(SimpleNamespace(id=20, tag="MOS")),  # Country: id + tag
         ]
 
