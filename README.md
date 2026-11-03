@@ -4,7 +4,7 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://github.com/astral-sh/ruff)
 [![mypy](https://img.shields.io/badge/type--checked-mypy-blue.svg)](https://mypy-lang.org/)
-[![Tests](https://img.shields.io/badge/tests-90%20passed-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-94%20passed-brightgreen.svg)]()
 
 **English** | [Русский](README.ru.md)
 
@@ -122,7 +122,15 @@ and processes new files automatically. Press `Ctrl+C` to stop.
 eu5statistic --file path/to/save.eu5
 ```
 
-Useful for debugging or batch processing.
+Useful for debugging.
+
+### Processing the save folder
+
+```bash
+eu5statistic --folder path/to/folder
+```
+
+Useful for batch processing.
 
 ### Clear localization cache
 
@@ -156,6 +164,18 @@ SELECT * FROM get_world_location_stats(1337, 1500) LIMIT 20;
 > selected language (`LOCALIZATION_LANGUAGE`). The country tag (`MOS`) is
 > not used in the functions — only in `get_all_vassals`.
 
+### Using SQL functions directly
+
+You can build reports in any BI tool
+(pgAdmin, DBeaver, Metabase, Power BI) — all functions are available via SQL:
+
+```sql
+SELECT * FROM get_country_summary(1337, 1500);
+SELECT * FROM get_culture_statistics(1337, 1500);
+SELECT * FROM get_religion_statistics(1337, 1500);
+SELECT * FROM get_all_vassals('MOS', 1444);
+```
+
 ## Screenshots
 
 ### Save processing
@@ -175,32 +195,16 @@ SELECT * FROM get_world_location_stats(1337, 1500) LIMIT 20;
 The project consists of two parts:
 
 1. **Python parser** (this repository) — processes saves and stores data in PostgreSQL.
-2. **Excel file with macros (XLSM)** — uses SQL functions from `functions.py`
-   to generate ready-made reports: population dynamics, cultures, religions,
-   vassal relations.
+2. **Excel file with macros (XLSM)** — connects directly to the database and generates ready-to-use analytical reports.
 
-> ⚠️ **Status:** the XLSM part is under active development. The Python part
-> is fully functional and provides all necessary SQL functions.
-> The finished XLSM will be published separately (or added to `docs/`).
+### XLSM Features:
+* 🌍 **Global reports**: religions, cultures, locations, and countries.
+* 🏳️ **Country-based reports**: selection of multiple tags (resolves issues like changing tags from "Moscow" to "Russia").
+* 🌐 **Full localization**: built-in language selection (RU/EN); adding new languages ​​is easy.
+* 🔌 **Smart connection**: automatic check for the presence of the PostgreSQL ODBC driver.
+* 📊 **Visualization**: formulas, grouping, and conditional formatting within reports.
 
-### Planned reports
-
-- **Population dynamics** by countries, cultures, religions for a selected period.
-- **Vassal networks** — hierarchy of suzerains and vassals.
-- **Culture comparison** — share of a culture in a country, region, or the world.
-- **Density maps** — population and literacy by location.
-
-### Using SQL functions directly
-
-If XLSM is not ready yet, you can build reports in any BI tool
-(pgAdmin, DBeaver, Metabase, Power BI) — all functions are available via SQL:
-
-```sql
-SELECT * FROM get_country_summary(1337, 1500);
-SELECT * FROM get_culture_statistics(1337, 1500);
-SELECT * FROM get_religion_statistics(1337, 1500);
-SELECT * FROM get_all_vassals('MOS', 1444);
-```
+👉 **[Read the full XLSM Guide (English)](docs/XLSM_GUIDE.md)** | **[Подробное руководство по XLSM (Русский)](docs/XLSM_GUIDE.ru.md)**
 
 ## Mods
 
@@ -327,21 +331,21 @@ pytest
 pytest --cov=eu5statistic --cov-report=html
 ```
 
-**90 tests**, coverage of key modules:
+**94 tests**, coverage of key modules:
 
 | Module | Coverage |
-|---|---|
-| `transformations.py` | 100% |
-| `models.py` | 100% |
-| `mods_resolver.py` | 100% |
-| `db_operations.py` | 100% |
-| `cache.py` | 93% |
-| `file_parser.py` | 92% |
-| `loader.py` | 92% |
-| `json_parser.py` | 91% |
-| `logging_setup.py` | 88% |
+|---|----------|
+| `transformations.py` | 100%     |
+| `models.py` | 100%     |
+| `mods_resolver.py` | 100%     |
+| `db_operations.py` | 100%     |
+| `cache.py` | 93%      |
+| `file_parser.py` | 100%     |
+| `loader.py` | 89%      |
+| `json_parser.py` | 91%      |
+| `logging_setup.py` | 88%      |
 
-Overall coverage — **55%**. The rest is integration tests with PostgreSQL and rakaly.
+Overall coverage — **64%**. The rest is integration tests with PostgreSQL and rakaly.
 
 ## License
 

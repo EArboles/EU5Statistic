@@ -76,3 +76,29 @@ def test_parse_bom(tmp_path: Path) -> None:
     parser = LocalizationFileParser(encoding="utf-8-sig")
     data = parser.parse(f)
     assert data["KEY"] == "Value"
+
+
+def test_parse_skips_lines_without_colon(parser: LocalizationFileParser, tmp_path: Path) -> None:
+    f = tmp_path / "test.yml"
+    f.write_text(
+        "l_russian:\n"
+        " JUST_A_WORD_WITHOUT_COLON\n"  # Row number 36
+        ' KEY: "Value"\n',
+        encoding="utf-8",
+    )
+    data = parser.parse(f)
+    assert "JUST_A_WORD_WITHOUT_COLON" not in data
+    assert data["KEY"] == "Value"
+
+
+def test_parse_handles_unclosed_quote(parser: LocalizationFileParser, tmp_path: Path) -> None:
+    f = tmp_path / "test.yml"
+    f.write_text(
+        "l_russian:\n"
+        ' KEY: "Unclosed value\n'  # Row number 47
+        ' KEY2: "Another"\n',
+        encoding="utf-8",
+    )
+    data = parser.parse(f)
+    assert data["KEY"] == "Unclosed value"
+    assert data["KEY2"] == "Another"

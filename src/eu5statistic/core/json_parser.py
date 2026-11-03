@@ -105,7 +105,7 @@ class JsonParser:
         with open(self.json_path, "rb") as f:
             parser = ijson.parse(f)
             for prefix, event, value in parser:
-                # Корневые поля (в начале файла)
+                # Root fields (at the beginning of the file)
                 if prefix == "metadata.date" and event == "string":
                     self._handle_date(value)
                 elif prefix == "metadata.flag" and event == "string":

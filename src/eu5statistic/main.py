@@ -93,7 +93,7 @@ async def _run_folder_async(
 async def _run_app_async(
     args: argparse.Namespace, localization_cache: LocalizationCache, brief: logging.Logger
 ) -> None:
-    """Единая асинхронная точка входа для всех режимов."""
+    """A single asynchronous entry point for all modes."""
     try:
         if args.file:
             file_path = Path(args.file)
@@ -113,10 +113,10 @@ async def _run_app_async(
             await _run_folder_async(folder_path, localization_cache, brief)
 
         else:
-            # Для watcher (он работает в своем потоке, поэтому просто вызываем синхронно)
+            # For watcher (It runs in its own thread, so we just call it synchronously)
             _run_watcher(localization_cache)
     finally:
-        # Закрываем БД ВНУТРИ работающего event loop
+        # Closing the DB INSIDE a running event loop
         await dispose_engine_async()
 
 
@@ -152,7 +152,7 @@ def main() -> None:
     brief.info("-" * LOG_DIVIDING_LINE_LENGTH)
 
     try:
-        # Запускаем ОДИН event loop для всей программы
+        # We launch a SINGLE event loop for the entire program
         asyncio.run(_run_app_async(args, localization_cache, brief))
     finally:
         brief.info("-" * LOG_DIVIDING_LINE_LENGTH)

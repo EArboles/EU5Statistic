@@ -63,7 +63,7 @@ class FileProcessor:
                 converter.convert_to_json(self.file_path, self.json_path)
             except Exception as e:
                 self.detail_log.exception(f"Conversion error: {e}")
-                # перемещаем в errors
+
                 self._copy_to_errors(self.file_path, "conversion_error")
                 return
 
@@ -116,7 +116,7 @@ class FileProcessor:
             self._copy_to_errors(self.file_path, "db_error", year=file_year)
             return
 
-        # 4. Успех
+        # 4. Success
         elapsed = time.time() - start_time
         self.detail_log.info(f"Processing completed successfully, time: {elapsed:.2f} sec")
         self.json_path.unlink(missing_ok=True)

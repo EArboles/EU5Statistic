@@ -10,7 +10,7 @@ engine = create_async_engine(
     connect_args={
         "server_settings": {
             "application_name": "eu5statistic",
-            "statement_timeout": "60000",  # 60 сек
+            "statement_timeout": "60000",  # 60 sec.
         }
     },
 )

@@ -91,3 +91,16 @@ def test_get_returns_default_for_missing_key(loader: LocalizationLoader, tmp_pat
 def test_get_returns_value_for_existing_key(loader: LocalizationLoader, tmp_path: Path) -> None:
     cache = LocalizationCache(loader, tmp_path / "cache.json")
     assert cache.get("KEY") == "Value"
+
+
+def test_cache_missing_keys_invalidates(loader: LocalizationLoader, tmp_path: Path) -> None:
+    """Covers the branch where the file exists, but `_load_cache` returned `None` (KeyError)."""
+    cache_file = tmp_path / "cache.json"
+    # Valid JSON, but missing the "version", "hash", and "data" keys
+    cache_file.write_text('{"some": "data"}', encoding="utf-8")
+
+    cache = LocalizationCache(loader, cache_file)
+    data = cache.get_data()
+
+    # Data should be loaded from the files, rather than causing a crash.
+    assert data["KEY"] == "Value"

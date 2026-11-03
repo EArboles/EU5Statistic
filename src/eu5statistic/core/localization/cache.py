@@ -19,7 +19,7 @@ class LocalizationCache:
 
     # Bump this when the cache format changes (e.g., new fields in payload).
     # Old caches will be ignored and regenerated automatically.
-    CACHE_VERSION = 1
+    CACHE_VERSION = 2
 
     def __init__(
         self,

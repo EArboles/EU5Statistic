@@ -96,7 +96,7 @@ def _detect_language(user_data_folder: Path | None) -> str:
                 lang = raw.get("System", {}).get("language", "").strip()
                 lang = lang.removeprefix("l_")
                 if lang:
-                    return lang
+                    return str(lang)
             except (json.JSONDecodeError, OSError):
                 pass
 
