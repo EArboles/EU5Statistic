@@ -86,10 +86,18 @@ asyncio_default_fixture_loop_scope = "function"
 
 [tool.mypy]
 python_version = "3.12"
-warn_unused_ignores = true
-warn_redundant_casts = true
-ignore_missing_imports = true
+strict = true
 exclude = [
     "^src/eu5statistic/db/migrations/",
 ]
-#strict = true
+
+[[tool.mypy.overrides]]
+module = "ijson.*"
+ignore_missing_imports = true
+
+[tool.coverage.run]
+omit = [
+    "src/eu5statistic/db/migrations/*",
+    "src/eu5statistic/main.py",
+    "src/eu5statistic/db/functions.py",
+]

@@ -74,8 +74,8 @@ class CountryStatistics(SQLModel, table=True):
 class Vassalage(SQLModel, table=True):
     __tablename__ = "vassalage"
     year: int
-    suzerain_id: int = Field(foreign_key="countries.id")  # сюзерен
-    vassal_id: int = Field(foreign_key="countries.id")  # вассал
+    suzerain_id: int = Field(foreign_key="countries.id")
+    vassal_id: int = Field(foreign_key="countries.id")
 
     __table_args__ = (PrimaryKeyConstraint("year", "suzerain_id", "vassal_id"),)
 

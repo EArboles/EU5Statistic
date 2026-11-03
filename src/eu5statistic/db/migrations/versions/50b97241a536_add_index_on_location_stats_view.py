@@ -1,8 +1,8 @@
 """add_index_on_location_stats_view
 
-Revision ID: b6881bc4f112
-Revises: 152e94a6ba4e
-Create Date: 2026-11-01 20:12:27.006067
+Revision ID: 50b97241a536
+Revises: 9e6e22bb32c4
+Create Date: 2026-11-03 20:59:03.152302
 
 """
 
@@ -11,8 +11,8 @@ from collections.abc import Sequence
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "b6881bc4f112"
-down_revision: str | Sequence[str] | None = "152e94a6ba4e"
+revision: str = "50b97241a536"
+down_revision: str | Sequence[str] | None = "9e6e22bb32c4"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 

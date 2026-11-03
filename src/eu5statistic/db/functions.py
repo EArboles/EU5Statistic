@@ -208,7 +208,7 @@ $function$
 
 get_all_vassals = PGFunction(
     schema="public",
-    signature="get_all_vassals(p_country_tag character varying, p_year integer)",
+    signature="get_all_vassals(p_tags character varying, p_year integer)",
     definition="""
 returns TABLE(vassal_id integer)
  LANGUAGE sql
@@ -219,7 +219,7 @@ AS $function$
         SELECT v.vassal_id
         FROM public.vassalage v
         JOIN public.countries c ON c.id = v.suzerain_id
-        WHERE c.tag = p_country_tag AND v.year = p_year
+        WHERE c.tag = ANY(string_to_array(p_tags, ';')) AND v.year = p_year
         
         UNION ALL
         
@@ -236,7 +236,7 @@ $function$
 
 get_target_country_cultures = PGFunction(
     schema="public",
-    signature="get_target_country_cultures(p_tag character varying, p_start_year integer, p_end_year integer)",
+    signature="get_target_country_cultures(p_tags character varying, p_start_year integer, p_end_year integer)",
     definition="""
  RETURNS TABLE(culture_name character varying, year integer, pop_in_country bigint, pop_in_vassals bigint, world_pop bigint)
  LANGUAGE plpgsql
@@ -246,7 +246,7 @@ BEGIN
     RETURN QUERY
     WITH 
     target_country AS (
-        SELECT id FROM public.countries WHERE tag = p_tag
+        SELECT id FROM public.countries WHERE tag = ANY(string_to_array(p_tags, ';'))
     ),
     available_years AS (
         SELECT * FROM get_available_years(p_start_year, p_end_year)
@@ -262,7 +262,7 @@ BEGIN
         )
         OR EXISTS (
             SELECT 1 FROM public.country_population_statistics cps
-            JOIN LATERAL get_all_vassals(p_tag, cps.year) vt ON vt.vassal_id = cps.country_id
+            JOIN LATERAL get_all_vassals(p_tags, cps.year) vt ON vt.vassal_id = cps.country_id
             WHERE cps.culture_id = c.id 
               AND cps.year BETWEEN p_start_year AND p_end_year
         )
@@ -283,7 +283,7 @@ BEGIN
             cps.year AS v_year,
             SUM(cps.population_size)::BIGINT AS pop
         FROM public.country_population_statistics cps
-        JOIN LATERAL get_all_vassals(p_tag, cps.year) vt ON vt.vassal_id = cps.country_id
+        JOIN LATERAL get_all_vassals(p_tags, cps.year) vt ON vt.vassal_id = cps.country_id
         WHERE cps.year BETWEEN p_start_year AND p_end_year
         GROUP BY cps.culture_id, cps.year
     ),
@@ -325,7 +325,7 @@ $function$
 
 get_target_country_religions = PGFunction(
     schema="public",
-    signature="get_target_country_religions(p_tag character varying, p_start_year integer, p_end_year integer)",
+    signature="get_target_country_religions(p_tags character varying, p_start_year integer, p_end_year integer)",
     definition="""
 RETURNS TABLE(religion_name character varying, year integer, pop_in_country bigint, pop_in_vassals bigint, world_pop bigint)
  LANGUAGE plpgsql
@@ -335,7 +335,7 @@ BEGIN
     RETURN QUERY
     WITH 
     target_country AS (
-        SELECT id FROM public.countries WHERE tag = p_tag
+        SELECT id FROM public.countries WHERE tag = ANY(string_to_array(p_tags, ';'))
     ),
     available_years AS (
         SELECT * FROM get_available_years(p_start_year, p_end_year)
@@ -351,7 +351,7 @@ BEGIN
         )
         OR EXISTS (
             SELECT 1 FROM public.country_population_statistics cps
-            JOIN LATERAL get_all_vassals(p_tag, cps.year) vt ON vt.vassal_id = cps.country_id
+            JOIN LATERAL get_all_vassals(p_tags, cps.year) vt ON vt.vassal_id = cps.country_id
             WHERE cps.religion_id = r.id 
               AND cps.year BETWEEN p_start_year AND p_end_year
         )
@@ -372,7 +372,7 @@ BEGIN
             cps.year AS v_year,
             SUM(cps.population_size)::BIGINT AS pop
         FROM public.country_population_statistics cps
-        JOIN LATERAL get_all_vassals(p_tag, cps.year) vt ON vt.vassal_id = cps.country_id
+        JOIN LATERAL get_all_vassals(p_tags, cps.year) vt ON vt.vassal_id = cps.country_id
         WHERE cps.year BETWEEN p_start_year AND p_end_year
         GROUP BY cps.religion_id, cps.year
     ),
@@ -432,7 +432,7 @@ $function$
 
 get_country_location_stats = PGFunction(
     schema="public",
-    signature="get_country_location_stats(p_tag character varying, p_start_year integer, p_end_year integer)",
+    signature="get_country_location_stats(p_tags character varying, p_start_year integer, p_end_year integer)",
     definition="""
 RETURNS TABLE(location_name character varying, year integer, total_population bigint, avg_literacy numeric, estate_burghers numeric, estate_soldiers numeric, estate_nobles numeric, estate_peasants numeric, estate_slaves numeric, estate_clergy numeric, estate_tribesmen numeric, estate_laborers numeric)
  LANGUAGE plpgsql
@@ -442,7 +442,7 @@ BEGIN
     RETURN QUERY
     WITH 
     target_country AS (
-        SELECT id FROM public.countries WHERE tag = p_tag
+        SELECT id FROM public.countries WHERE tag = ANY(string_to_array(p_tags, ';'))
     ),
     -- All pairs (location, year) where the country held the location within the specified range
     ownership AS (
