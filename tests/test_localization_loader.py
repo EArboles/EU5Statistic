@@ -24,6 +24,7 @@ def _write_yml(folder: Path, name: str, content: str) -> Path:
 # Tests for reference resolution
 # ---------------------------------------------------------------------------
 
+
 def test_resolve_simple_reference(parser: LocalizationFileParser, tmp_path: Path) -> None:
     folder = tmp_path / "vanilla"
     _write_yml(folder, "a.yml", 'l_russian:\n AAA: "$strumica$"\n strumica: "Струмица"\n')
