@@ -38,7 +38,10 @@ def _build_localization_cache(brief: logging.Logger) -> LocalizationCache:
     folders.append(game_loc)
 
     # 2. Active mods
-    mod_paths = ModsResolver(cast(Path, USER_DATA_FOLDER)).get_active_mod_paths()
+    mod_paths = ModsResolver(cast(Path, USER_DATA_FOLDER), brief).get_active_mod_paths()
+
+    local_mods_without_loc: list[str] = []
+    workshop_mods_without_loc: list[str] = []
     if mod_paths:
         brief.info("Active mods found: %d", len(mod_paths))
     for mod in mod_paths:
@@ -46,13 +49,25 @@ def _build_localization_cache(brief: logging.Logger) -> LocalizationCache:
         if mod_loc.is_dir():
             folders.append(mod_loc)
         else:
-            brief.warning("Mod has no localization for '%s': %s", LOCALIZATION_LANGUAGE, mod)
+            if "workshop" in str(mod).lower():
+                workshop_mods_without_loc.append(mod.name)
+            else:
+                local_mods_without_loc.append(mod.name)
+
+    if local_mods_without_loc or workshop_mods_without_loc:
+        parts = []
+        if local_mods_without_loc:
+            parts.append(f"Local: {', '.join(local_mods_without_loc)}")
+        if workshop_mods_without_loc:
+            parts.append(f"Workshop: {', '.join(workshop_mods_without_loc)}")
+
+        brief.warning("Mods without '%s' localization: %s",LOCALIZATION_LANGUAGE, " | ".join(parts))
 
     # 3. Parser + loader + cache
     parser = LocalizationFileParser(encoding="utf-8")
-    loader = LocalizationLoader(folders, parser)
+    loader = LocalizationLoader(folders, parser, brief)
     cache_file = CACHE_DIR / "localization_cache.json"
-    return LocalizationCache(loader, cache_file)
+    return LocalizationCache(loader, cache_file, brief)
 
 
 async def _process_one_file(

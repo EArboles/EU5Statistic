@@ -6,8 +6,6 @@ from pathlib import Path
 
 from .loader import LocalizationLoader
 
-logger = logging.getLogger(__name__)
-
 
 class LocalizationCache:
     """
@@ -25,10 +23,12 @@ class LocalizationCache:
         self,
         loader: LocalizationLoader,
         cache_file: Path,
+        logger: logging.Logger,
     ) -> None:
         self.loader = loader
         self.cache_file = cache_file
         self._cache: dict[str, str] | None = None
+        self.logger: logging.Logger = logger
 
     def get_data(self) -> dict[str, str]:
         """Returns the localization: from memory → from cache → from files"""
@@ -40,15 +40,15 @@ class LocalizationCache:
         if cached is not None:
             version, cached_hash, data = cached
             if version == self.CACHE_VERSION and cached_hash == current_hash:
-                logger.info("Localization loaded from cache (%d keys)", len(data))
+                self.logger.info("Localization loaded from cache (%d keys)", len(data))
                 self._cache = data
                 return self._cache
         elif self.cache_file.is_file():
-            logger.warning("Cache file exists but could not be read: %s", self.cache_file)
+            self.logger.warning("Cache file exists but could not be read: %s", self.cache_file)
 
-        logger.info("Loading localization from files...")
+        self.logger.info("Loading localization from files...")
         data = self.loader.load_all()
-        logger.info("Loaded %d localization keys", len(data))
+        self.logger.info("Loaded %d localization keys", len(data))
         self._save_cache(current_hash, data)
         self._cache = data
         return data
@@ -82,6 +82,6 @@ class LocalizationCache:
             "data": data,
         }
         self.cache_file.write_text(
-            json.dumps(payload, ensure_ascii=False),
+            json.dumps(payload, ensure_ascii=False, indent=2),
             encoding="utf-8",
         )
