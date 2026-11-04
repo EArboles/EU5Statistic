@@ -2,6 +2,7 @@
 
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -88,6 +89,7 @@ def test_parse_metadata(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert data.year == 1337
     assert data.month == 4
     assert data.day == 1
@@ -98,6 +100,7 @@ def test_parse_cultures(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert data.cultures == {0: "russian", 1: "tatar"}
 
 
@@ -105,6 +108,7 @@ def test_parse_religions(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert data.religions == {0: "orthodox", 1: "sunni"}
 
 
@@ -112,6 +116,7 @@ def test_parse_country_tags(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert data.country_tags == {0: "MOS", 1: "TAT"}
 
 
@@ -119,6 +124,7 @@ def test_parse_countries(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert 0 in data.countries
     assert data.countries[0].country_name == "Moscow"
     assert data.countries[0].primary_culture == 0
@@ -130,6 +136,7 @@ def test_parse_population(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert 1 in data.population
     assert data.population[1].estate == "peasants"
     assert data.population[1].size == 10500  # 10.5 * 1000
@@ -142,6 +149,7 @@ def test_parse_vassalage(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert data.subjects.get(0) == [1]
 
 
@@ -149,6 +157,7 @@ def test_parse_locations(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert data.locations[1] == [1, 2]
     assert data.locations[2] == []
     assert data.locations[3] == []
@@ -158,6 +167,7 @@ def test_parse_location_names(minimal_save: Path) -> None:
     parser = JsonParser(str(minimal_save))
     ok, data = parser.parse_all()
     assert ok
+    assert data is not None
     assert data.locations_names == {1: "Loc1", 2: "Loc2", 3: "Loc3"}
 
 
@@ -187,7 +197,7 @@ def test_missing_date_returns_false(tmp_path: Path) -> None:
 
 
 def test_no_metadata_at_all_returns_false(tmp_path: Path) -> None:
-    data = {"culture_manager": {"database": {}}}
+    data: dict[str, dict[str, Any]] = {"culture_manager": {"database": {}}}
     f = tmp_path / "save.json"
     f.write_text(json.dumps(data), encoding="utf-8")
     parser = JsonParser(str(f))
