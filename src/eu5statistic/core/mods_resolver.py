@@ -54,10 +54,12 @@ class ModsResolver:
             if path.is_dir():
                 paths.append(path)
             else:
-                if "workshop" in str(mod).lower():
-                    workshop_mods_without_loc.append(mod.name)
+                mod_name = path.name
+
+                if "workshop" in path_str.lower():
+                    workshop_mods_without_loc.append(mod_name)
                 else:
-                    local_mods_without_loc.append(mod.name)
+                    local_mods_without_loc.append(mod_name)
 
         if local_mods_without_loc or workshop_mods_without_loc:
             parts = []

@@ -102,6 +102,8 @@ def test_resolve_circular_reference_does_not_crash(
     caplog: pytest.LogCaptureFixture,
     test_logger: logging.Logger,
 ) -> None:
+    caplog.set_level(logging.DEBUG)
+
     folder = tmp_path / "vanilla"
     _write_yml(folder, "a.yml", 'l_russian:\n A: "$B$"\n B: "$A$"\n')
 

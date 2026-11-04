@@ -49,10 +49,12 @@ def _build_localization_cache(brief: logging.Logger) -> LocalizationCache:
         if mod_loc.is_dir():
             folders.append(mod_loc)
         else:
+            mod_name = mod.name
+
             if "workshop" in str(mod).lower():
-                workshop_mods_without_loc.append(mod.name)
+                workshop_mods_without_loc.append(mod_name)
             else:
-                local_mods_without_loc.append(mod.name)
+                local_mods_without_loc.append(mod_name)
 
     if local_mods_without_loc or workshop_mods_without_loc:
         parts = []
@@ -61,7 +63,9 @@ def _build_localization_cache(brief: logging.Logger) -> LocalizationCache:
         if workshop_mods_without_loc:
             parts.append(f"Workshop: {', '.join(workshop_mods_without_loc)}")
 
-        brief.warning("Mods without '%s' localization: %s",LOCALIZATION_LANGUAGE, " | ".join(parts))
+        brief.warning(
+            "Mods without '%s' localization: %s", LOCALIZATION_LANGUAGE, " | ".join(parts)
+        )
 
     # 3. Parser + loader + cache
     parser = LocalizationFileParser(encoding="utf-8")
