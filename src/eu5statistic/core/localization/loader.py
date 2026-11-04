@@ -7,8 +7,6 @@ from pathlib import Path
 
 from .file_parser import LocalizationFileParser
 
-logger = logging.getLogger(__name__)
-
 # Regular expression for finding variables.
 # In Paradox, this is typically $key$ or $key|command$
 VAR_PATTERN = re.compile(r"\$([^$]+)\$")
@@ -23,12 +21,11 @@ class LocalizationLoader:
     """
 
     def __init__(
-        self,
-        folders: list[Path],
-        parser: LocalizationFileParser,
+        self, folders: list[Path], parser: LocalizationFileParser, logger: logging.Logger
     ) -> None:
         self.folders = folders
         self.parser = parser
+        self.logger: logging.Logger = logger
 
     def load_all(self) -> dict[str, str]:
         """
@@ -37,13 +34,13 @@ class LocalizationLoader:
         data: dict[str, str] = {}
         for folder in self.folders:
             if not folder.is_dir():
-                logger.warning("Localization folder not found: %s", folder)
+                self.logger.warning("Localization folder not found: %s", folder)
                 continue
             for file in sorted(folder.rglob("*.yml")):
                 try:
                     data.update(self.parser.parse(file))
                 except (OSError, UnicodeDecodeError) as e:
-                    logger.warning("Error loading localization %s: %s", file, e)
+                    self.logger.warning("Error loading localization %s: %s", file, e)
 
         # Once all data has been collected, we exclude references to other keys
         resolved_data = self._resolve_references(data)
@@ -61,7 +58,7 @@ class LocalizationLoader:
 
         def resolve_string(key: str, value: str) -> str:
             if key in resolving:
-                logger.warning("Circular reference detected for key: %s", key)
+                self.logger.debug("Circular reference detected for key: %s", key)
                 return value
 
             resolving.add(key)

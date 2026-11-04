@@ -5,6 +5,7 @@
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://github.com/astral-sh/ruff)
 [![mypy](https://img.shields.io/badge/type--checked-mypy-blue.svg)](https://mypy-lang.org/)
 [![Tests](https://img.shields.io/badge/tests-94%20passed-brightgreen.svg)]()
+[![EU5 Version](https://img.shields.io/badge/EU5-1.4.*-blue.svg)](https://www.paradoxinteractive.com/games/europa-universalis-v)
 
 **English** | [Русский](README.ru.md)
 
@@ -30,7 +31,7 @@ stores it in PostgreSQL, and exposes SQL functions for analytics.
 - **[rakaly](https://github.com/crschnick/pdx_unlimiter/tree/master/rakaly)** —
   a CLI utility for converting binary Paradox saves to JSON.
   The `pdx_unlimiter` fork is recommended (tested and more stable).
-- **Installed Europa Universalis V game** (for access to localizations and the save folder).
+- **Installed Europa Universalis V game** (tested on version **1.4.x**). Save file structure may change in future patches.
 
 ## Installation
 
@@ -277,6 +278,7 @@ src/eu5statistic/
 - **No web interface** — only SQL functions and console output.
 - **PostgreSQL only** — due to `ON CONFLICT` and materialized views.
   SQLite is not supported.
+- **Game version compatibility**: tested on EU5 **1.4.x**. Future patches may alter the save file structure, requiring parser updates.
 
 ## FAQ
 

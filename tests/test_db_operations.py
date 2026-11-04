@@ -1,6 +1,7 @@
 """Tests for db_operations: EntityCaches and upsert helpers."""
 
 from types import SimpleNamespace
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -148,7 +149,9 @@ from eu5statistic.db.models import (
         ),
     ],
 )
-async def test_upsert_helpers(func, model, input_data, expected_records, conflict, update) -> None:
+async def test_upsert_helpers(
+    func: Any, model: Any, input_data: Any, expected_records: Any, conflict: Any, update: Any
+) -> None:
     with patch("eu5statistic.db.db_operations.upsert_batch", new_callable=AsyncMock) as mock:
         # For functions that take year, call with year
         if func in (
@@ -204,7 +207,7 @@ class TestUpsertBatch:
         """upsert_batch with empty list should return immediately."""
         # No DB call should happen; if it did, AsyncSessionLocal would fail
         await upsert_batch(
-            model=object,  # type: ignore[arg-type]
+            model=Estate,
             records=[],
             conflict_columns=["id"],
         )
@@ -233,7 +236,7 @@ class TestUpsertBatch:
 # ---------- load_caches ----------
 
 
-def make_scalar(value):
+def make_scalar(value: Any) -> MagicMock:
     mock = MagicMock()
     mock.scalars.return_value = [value]
     return mock

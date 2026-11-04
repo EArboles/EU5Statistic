@@ -1,6 +1,7 @@
 """Tests for logging_setup: brief and detail loggers."""
 
 import logging
+from collections.abc import Generator
 from pathlib import Path
 
 import pytest
@@ -13,10 +14,10 @@ from eu5statistic.services.logging_setup import (
 
 
 @pytest.fixture(autouse=True)
-def clean_loggers():
+def clean_loggers() -> Generator[None, None, None]:
     """Remove handlers BEFORE and AFTER each test."""
 
-    def _clean():
+    def _clean() -> None:
         for name in list(logging.Logger.manager.loggerDict.keys()):
             if name == "brief" or name.startswith("detail_"):
                 logger = logging.getLogger(name)
@@ -29,7 +30,7 @@ def clean_loggers():
     _clean()
 
 
-def test_setup_brief_logger_creates_file(tmp_path: Path, monkeypatch) -> None:
+def test_setup_brief_logger_creates_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     log_file = tmp_path / "brief.log"
     monkeypatch.setattr("eu5statistic.services.logging_setup.BRIEF_LOG", log_file)
 
@@ -44,7 +45,7 @@ def test_setup_brief_logger_creates_file(tmp_path: Path, monkeypatch) -> None:
     assert "test message" in log_file.read_text(encoding="utf-8")
 
 
-def test_setup_brief_logger_idempotent(tmp_path: Path, monkeypatch) -> None:
+def test_setup_brief_logger_idempotent(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     log_file = tmp_path / "brief.log"
     monkeypatch.setattr("eu5statistic.services.logging_setup.BRIEF_LOG", log_file)
 
@@ -54,7 +55,7 @@ def test_setup_brief_logger_idempotent(tmp_path: Path, monkeypatch) -> None:
     assert logger1 is logger2  # same logger object
 
 
-def test_get_detail_logger_creates_file(tmp_path: Path, monkeypatch) -> None:
+def test_get_detail_logger_creates_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("eu5statistic.services.logging_setup.LOG_DIR", tmp_path)
     logger = get_detail_logger("test_run")
     logger.info("detail message")
@@ -67,7 +68,7 @@ def test_get_detail_logger_creates_file(tmp_path: Path, monkeypatch) -> None:
     assert "detail message" in log_file.read_text(encoding="utf-8")
 
 
-def test_rename_log_file(tmp_path: Path, monkeypatch) -> None:
+def test_rename_log_file(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr("eu5statistic.services.logging_setup.LOG_DIR", tmp_path)
     logger = get_detail_logger("test_run")
     logger.info("before rename")

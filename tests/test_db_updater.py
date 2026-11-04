@@ -118,7 +118,7 @@ class TestBuildCountryPopulationPairs:
             religions={"orthodox": 20},
         )
 
-        groups = {(0, 0): (1000, 50.0)}
+        groups = {(0, 0): [1000, 50.0]}
         pairs = updater._build_country_population_pairs(42, groups)
 
         assert len(pairs) == 1

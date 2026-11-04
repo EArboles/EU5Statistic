@@ -5,6 +5,7 @@
 [![Ruff](https://img.shields.io/badge/lint-ruff-261230.svg)](https://github.com/astral-sh/ruff)
 [![mypy](https://img.shields.io/badge/type--checked-mypy-blue.svg)](https://mypy-lang.org/)
 [![Tests](https://img.shields.io/badge/tests-94%20passed-brightgreen.svg)]()
+[![EU5 Version](https://img.shields.io/badge/EU5-1.4.*-blue.svg)](https://www.paradoxinteractive.com/games/europa-universalis-v)
 
 [English](README.md) | **Русский**
 
@@ -38,8 +39,7 @@
 - **[rakaly](https://github.com/crschnick/pdx_unlimiter/tree/master/rakaly)** —
   CLI-утилита для конвертации бинарных сохранений Paradox в JSON.
   Рекомендуется форк от `pdx_unlimiter` (проверенный, работает стабильнее).
-- **Установленная игра Europa Universalis V** (для доступа к локализациям
-  и папке сохранений).
+- **Установленная игра Europa Universalis V** (проверено на версии **1.4.x**). Структура сохранений может измениться в будущих патчах.
 
 ## Установка
 
@@ -300,6 +300,7 @@ src/eu5statistic/
 - **Нет веб-интерфейса** — только SQL-функции и консольный вывод.
 - **Только PostgreSQL** — из-за `ON CONFLICT` и materialized views.
   SQLite не подходит.
+- **Совместимость с версией игры**: проверено на EU5 **1.4.x**. Будущие патчи могут изменить структуру сохранений, что потребует обновления парсера.
 
 ## FAQ
 
