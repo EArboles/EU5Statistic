@@ -46,10 +46,17 @@ def _build_localization_cache(brief: logging.Logger) -> LocalizationCache:
         brief.info("Active mods found: %d", len(mod_paths))
     for mod in mod_paths:
         mod_loc = mod / "main_menu" / "localization" / LOCALIZATION_LANGUAGE
+
+        has_any_localization = (mod / "main_menu" / "localization").is_dir()
+
         if mod_loc.is_dir():
             folders.append(mod_loc)
         else:
             mod_name = mod.name
+
+            if not has_any_localization:
+                brief.debug("Mod '%s' has no localization folder (likely a numeric mod)", mod.name)
+                continue
 
             if "workshop" in str(mod).lower():
                 workshop_mods_without_loc.append(mod_name)

@@ -9,22 +9,44 @@
 
 **English** | [Русский](README.ru.md)
 
-A tool for collecting and analyzing statistics from
-[Europa Universalis V](https://www.paradoxinteractive.com/games/europa-universalis-v) save files.
-It parses saves in real time, extracts data on population, cultures, religions, and vassalage,
-stores it in PostgreSQL, and exposes SQL functions for analytics.
+![EU5Statistics Banner](docs/screenshots/banner_en.png)
 
-## Features
+**Explore the past, analyze its history.**
+EU5Statistics is a comprehensive statistics and analytics platform for Europa Universalis V. It collects data from saved games, allows you to compare countries, cultures and religions, and track changes in the course of all parties.
 
-- 📊 **Real-time save parsing** — `watchdog` monitors the save folder and processes new files automatically.
-- 🗄️ **PostgreSQL storage** — time-series support (data by year), idempotent processing (re-parsing replaces data for the year).
-- 🌍 **Mod support** — automatically detects active mods from `playsets.json` and layers their localizations over vanilla.
-- 📈 **SQL functions for analytics** — dynamics of cultures, religions, vassals, statistics by locations and countries.
-- 📦 **Materialized views** — fast queries for Excel/VBA and BI tools integration.
-- 🔄 **Error resilience** — failed files are copied to `data/errors/`, originals are preserved.
-- 🌐 **Multilingual** — Russian and English localizations, extendable via `transformations.py`.
+> **Important:** This is not a mod or a web service. The project currently includes a Python parser, a PostgreSQL database, and Excel reports with macros. It requires a local installation.
 
-## Requirements
+## Why use it?
+
+The game provides some statistics, but it's not always easy to answer questions about the **whole world** or compare **multiple states across different years**. 
+
+With EU5Statistics, you can:
+- Compare several countries at once.
+- Analyze cultures and religions.
+- Build graphs of the development.
+- Study the composition and changes after wars.
+- Track diplomatic ties and other features.
+
+## Example of the prepared report
+
+![EU5Statistics Excel report: countries in 1385 and 1390](docs/screenshots/country_report_en.png)
+
+*Report on a country over time: population, for the main cultures and religions, the location and size of its territories.*
+
+## How it works
+
+![Game save — parser — database — reports](docs/screenshots/workflow_en.png)
+
+1. **Save Game Files.** Find your Europa Universalis V files.
+2. **Parser (Python).** Extract data from your saves.
+3. **Database (PostgreSQL).** Store all data.
+4. **Reports and Analysis.** Create Excel reports with charts and tables.
+
+---
+
+## Installation and technical documentation
+
+### Requirements
 
 - **Python 3.12+**
 - **PostgreSQL 14+**
